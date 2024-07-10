@@ -57,6 +57,17 @@ class Product_Layout:
     __slots__ = 'layout', 'dimensions', 'array'
 
     def __init__(self, layout_file: Path|str):
-        self.layout = pd.read_csv(layout_file)
+        # Checking if the file exists
+        if not Path(layout_file).is_file():
+            raise FileNotFoundError(f"No such file: {layout_file}")
+        # Attempt to read CSV with standard parameters and additional diagnostics
+        try:
+            self.layout = pd.read_csv(layout_file, header=None, delimiter=';')  # Assuming no header
+        except Exception as e:
+            # If reading fails, raise an informative error
+            raise IOError(f"Failed to read the file: {e}")
+
+        #self.layout = pd.read_csv(layout_file)
         self.dimensions = self.layout.shape[1]
         self.array = self.layout.to_numpy(dtype=str)
+        # print('done')

@@ -141,15 +141,32 @@ class Product_Array(Product_Layout):
         self.design = xr.DataArray(self.array, dims=['x', 'y'],
                                    coords={'x': list(map(chr, range(65, 65 + self.array.shape[0]))),
                                            'y': list(range(1, self.array.shape[1] + 1))})
+        print('Product array created.')
 
     def __getitem__(self, pos:str) -> list|str:
 
         '''
-        Takes a well position and returns the product in this position.
+        Takes a well position and returns the substrates in this position.
         '''
 
         item = self.design.loc[pos[0], int(pos[1:])].item()
+        if '.' in item:
+            item = item.split('.')
         return item
+
+    def get_product(self, pos):
+
+        '''
+        Returns the product of the reaction in the given position.
+
+        Args:
+            pos (str): Well position.
+
+        Returns:
+            str: SMILES string of the product.
+
+        '''
+        return self[pos]
 
     def get_product_mw(self, pos: str):
         '''

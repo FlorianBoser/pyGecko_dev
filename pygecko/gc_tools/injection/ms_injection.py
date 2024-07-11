@@ -120,17 +120,25 @@ class MS_Injection(Injection):
                 # Changed to 2.0
                 # print(str(self.plate_pos) + " : " + str(rt)+ " : " + str(peak.mass_spectrum['rel_intensity'][index][0]))
                 if peak.mass_spectrum['rel_intensity'][index][0] > 2.0 and mz > peak.mass_spectrum['mz'].max() * (
-                        2 / 3):  # TODO: Check if this is a good decision.
+                        2 / 3):  # 2/3
+                    # GC/MS 6 has relative low molecular/parent peaks, so lets try 1/3 instead of 2/3
                     isotope_error = self.__isotope_check(smiles, peak, mz)
                     if isotope_error:
                         candidates[isotope_error] = peak
         if candidates:
             if len(candidates) > 1:
-                print(f'Multiple peaks with m/z {mz} fitting the calculated isotope pattern were found for {self.sample_name}.')
-            peak = candidates[min(candidates)]  # selects the peak with the lowest isotope error
+                print(f'{len(candidates)} peaks with m/z {mz} fitting the calculated isotope pattern were found for {self.sample_name}.')
+            # peak = candidates[min(candidates)]  # selects the peak with the lowest isotope error
+            # FBS: Due to Regioisomers and Isomers in the project with CSN and JLT, we select the peak with the highest area, within 5% of the isotope error
+            candidates_by_area = {}
+            for p in candidates.values():
+                candidates_by_area[p.area] = p
+            peak = candidates_by_area[max(candidates_by_area)]
+
             peak.analyte = Analyte(peak.rt, smiles=smiles)
             return peak
         return None
+
     def pick_peaks(self, inplace: bool = True,  **kwargs: dict) -> None|dict[float, MS_Peak]:        # FBS Addition of a discovery mode
 
         '''

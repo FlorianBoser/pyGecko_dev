@@ -270,11 +270,11 @@ class Analysis:
                 product_ratio = (product_area_or_height / total_area_or_height) * 100
 
                 # Classify the product ratio into qualitative categories for quantification
-                if product_ratio >= 35:     # 80
+                if product_ratio >= 25:     # 80
                     yield_ = 'excellent'
-                elif product_ratio >= 25:   # 60
+                elif product_ratio >= 15:   # 60
                     yield_ = 'good'
-                elif product_ratio >= 15:   # 30
+                elif product_ratio >= 5:   # 30
                     yield_ = 'fair'
                 elif product_ratio >= 1:    # 30
                     yield_ = 'poor'

@@ -60,7 +60,7 @@ class Peak_Detection_MS:
         intensities = chromatogram[1]
 
         # min_height = analysis_settings.pop('height', np.min(intensities) * 50)
-        min_height = analysis_settings.pop('height', np.min(intensities[intensities > 0]) * 5)    # 50
+        min_height = analysis_settings.pop('height', np.min(intensities[intensities > 0]) * 50)    # 50
         prominence = analysis_settings.pop('prominence_ms', 1)
         prominence = np.median(intensities) * prominence
         # FID uses this prominence # prominence_fid = analysis_settings.pop('prominence_ms', np.mean(intensities))

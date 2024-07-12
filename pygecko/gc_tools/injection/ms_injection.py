@@ -119,15 +119,18 @@ class MS_Injection(Injection):
                 # FBS peak.mass_spectrum['rel_intensity'][index][0] > 4 seems to be way to high: I checked for Standard Dodecane and it was only 1.64
                 # Changed to 2.0
                 # print(str(self.plate_pos) + " : " + str(rt)+ " : " + str(peak.mass_spectrum['rel_intensity'][index][0]))
-                if peak.mass_spectrum['rel_intensity'][index][0] > 2.0 and mz > peak.mass_spectrum['mz'].max() * (
+                if peak.mass_spectrum['rel_intensity'][index][0] > 15.0 and mz > peak.mass_spectrum['mz'].max() * (
                         2 / 3):  # 2/3
-                    # GC/MS 6 has relative low molecular/parent peaks, so lets try 1/3 instead of 2/3
+                    # GC/MS 6 has relative low molecular/parent peaks, 2.0 should be fine
                     isotope_error = self.__isotope_check(smiles, peak, mz)
                     if isotope_error:
                         candidates[isotope_error] = peak
         if candidates:
             if len(candidates) > 1:
-                print(f'{len(candidates)} peaks with m/z {mz} fitting the calculated isotope pattern were found for {self.sample_name}.')
+                # FBS Print information for manual inspection of the peaks with multiple peaks wich could be the analyte
+                # Extract the retention times of the peaks in candidates
+                retention_times = [peak.rt for peak in candidates.values()]
+                print(f'{len(candidates)} peaks with m/z {mz} fitting the calculated isotope pattern were found for {self.sample_name:<20}. Retention times: {str(retention_times):<50}')
             # peak = candidates[min(candidates)]  # selects the peak with the lowest isotope error
             # FBS: Due to Regioisomers and Isomers in the project with CSN and JLT, we select the peak with the highest area, within 5% of the isotope error
             candidates_by_area = {}

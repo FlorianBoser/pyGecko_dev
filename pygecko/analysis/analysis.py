@@ -305,6 +305,7 @@ class Analysis:
                 if mode == 'conv':
                     yield_ = 100 - yield_
                 results_dict[pos] = [yield_, mz_match.rt, np.nan, analyte]
+                print(f'{ms_injection.sample_name:<20} : {product_ratio:<20} : {mz_match.rt:<20} : {mz_match.analyte.mz:<20}\n')
             else:
                 results_dict[pos] = [np.nan, np.nan, np.nan, '']
         return results_dict

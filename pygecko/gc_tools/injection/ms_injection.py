@@ -119,9 +119,9 @@ class MS_Injection(Injection):
                 # FBS peak.mass_spectrum['rel_intensity'][index][0] > 4 seems to be way to high: I checked for Standard Dodecane and it was only 1.64
                 # Changed to 2.0
                 # print(str(self.plate_pos) + " : " + str(rt)+ " : " + str(peak.mass_spectrum['rel_intensity'][index][0]))
-                if peak.mass_spectrum['rel_intensity'][index][0] > 15.0 and mz > peak.mass_spectrum['mz'].max() * (
+                if peak.mass_spectrum['rel_intensity'][index][0] > 1.0 and mz > peak.mass_spectrum['mz'].max() * (
                         2 / 3):  # 2/3
-                    # GC/MS 6 has relative low molecular/parent peaks, 2.0 should be fine
+                    # GC/MS 6 has relative low molecular/parent peaks, 15.0 should be fine
                     isotope_error = self.__isotope_check(smiles, peak, mz)
                     if isotope_error:
                         candidates[isotope_error] = peak
@@ -131,12 +131,15 @@ class MS_Injection(Injection):
                 # Extract the retention times of the peaks in candidates
                 retention_times = [peak.rt for peak in candidates.values()]
                 print(f'{len(candidates)} peaks with m/z {mz} fitting the calculated isotope pattern were found for {self.sample_name:<20}. Retention times: {str(retention_times):<50}')
-            # peak = candidates[min(candidates)]  # selects the peak with the lowest isotope error
+
+            ###
+            peak = candidates[min(candidates)]  # selects the peak with the lowest isotope error
             # FBS: Due to Regioisomers and Isomers in the project with CSN and JLT, we select the peak with the highest area, within 5% of the isotope error
-            candidates_by_area = {}
-            for p in candidates.values():
-                candidates_by_area[p.area] = p
-            peak = candidates_by_area[max(candidates_by_area)]
+            # candidates_by_area = {}
+            # for p in candidates.values():
+            #     candidates_by_area[p.area] = p
+            # peak = candidates_by_area[max(candidates_by_area)]
+            ###
 
             peak.analyte = Analyte(peak.rt, smiles=smiles)
             return peak
@@ -208,7 +211,12 @@ class MS_Injection(Injection):
         i = np.where(peak.mass_spectrum['mz'] == mz)[0]
         j = np.where(peak.mass_spectrum['mz'] == mz+diff)[0]
         if not i or not j:
-            return False
+            # return False
+            # FBS
+            # Only for molecules with low molecular/parent peaks
+            print(f'{self.sample_name}: Peak {peak.rt} has no parent peak + 1 signal!')
+            return abs(100)
+
         ratio = peak.mass_spectrum['rel_intensity'][j][0]/peak.mass_spectrum['rel_intensity'][i][0]
         mol_formula = self.__get_mol_formula_dict(mol)
         isotopic_dist = isotopic_variants(mol_formula, npeaks=3, charge=0)
@@ -216,7 +224,11 @@ class MS_Injection(Injection):
         if (theo_ratio - 0.055) < ratio < (theo_ratio + 0.055):
             return abs(theo_ratio - ratio)
         else:
-            return None
+            # return None
+            # FBS
+            # Only for molecules with low molecular/parent peaks
+            print(f'{self.sample_name}: Peak {peak.rt} has high isotopic ratio error of {abs(theo_ratio - ratio)}!')
+            return abs(theo_ratio - ratio)
 
     def __get_mol_formula_dict(self, mol) -> dict:
 

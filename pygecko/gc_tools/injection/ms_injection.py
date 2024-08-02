@@ -64,7 +64,7 @@ class MS_Injection(Injection):
         for rt, peak in self.peaks.items():
             if mz in peak.mass_spectrum['mz']:
                 index = np.where(peak.mass_spectrum['mz'] == mz)[0]
-                if peak.mass_spectrum['rel_intensity'][index][0] > 4 and mz > peak.mass_spectrum['mz'].max()*(2/3):
+                if peak.mass_spectrum['rel_intensity'][index][0] > 2 and mz > peak.mass_spectrum['mz'].max()*(2/3):
                     candidates.append(peak)
         if candidates:
             if len(candidates) > 1:
@@ -119,7 +119,7 @@ class MS_Injection(Injection):
                 # FBS peak.mass_spectrum['rel_intensity'][index][0] > 4 seems to be way to high: I checked for Standard Dodecane and it was only 1.64
                 # Changed to 2.0
                 # print(str(self.plate_pos) + " : " + str(rt)+ " : " + str(peak.mass_spectrum['rel_intensity'][index][0]))
-                if peak.mass_spectrum['rel_intensity'][index][0] > 15.0 and mz > peak.mass_spectrum['mz'].max() * (
+                if peak.mass_spectrum['rel_intensity'][index][0] > 2.0 and mz > peak.mass_spectrum['mz'].max() * (
                         2 / 3):  # 2/3
                     # GC/MS 6 has relative low molecular/parent peaks, 2.0 should be fine
                     isotope_error = self.__isotope_check(smiles, peak, mz)

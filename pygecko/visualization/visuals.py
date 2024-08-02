@@ -434,13 +434,13 @@ class Visualization:
 
         # Add legend, positioned below the heatmap in a horizontal line, without box
         ax.legend(handles=color_legend, bbox_to_anchor=(0.5, -0.1), loc='upper center', borderaxespad=0.,
-                  ncol=len(unique_labels), frameon=False)
+                 ncol=len(unique_labels), frameon=False)
         # # Add legend
-        # ax.legend(handles=color_legend,  bbox_to_anchor=(0.5, -0.05), loc='upper center', borderaxespad=0.)
+        # ax.legend(handles=color_legend,  bbox_to_anchor=(0.5, -0.05), loc='upper center', borderaxespad=0., frameon = False)
 
         fig.tight_layout()
         if path:
-            plt.savefig(path, dpi=400, bbox_inches='tight')
+            plt.savefig(path, dpi=600, bbox_inches='tight')
             plt.close()
         else:
             plt.show()

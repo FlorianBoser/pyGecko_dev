@@ -3,6 +3,7 @@ from typing import Union
 from typing import TYPE_CHECKING
 from pygecko.gc_tools.utilities import Utilities
 import matplotlib.pyplot as plt
+from matplotlib.patches import Patch
 from matplotlib.collections import PatchCollection
 import matplotlib
 from matplotlib.ticker import (MultipleLocator)
@@ -17,6 +18,7 @@ plt.rcParams["font.family"] = 'sans-serif'
 plt.rcParams['font.sans-serif'] = ['Arial']
 plt.rcParams['font.size'] = 12
 plt.rcParams['font.weight'] = 'regular'
+#plt.rcParams['fig.width'] = 8.5
 
 class Visualization:
 
@@ -32,6 +34,22 @@ class Visualization:
             path (str|None, optional): Path to save the figure to. Defaults to None.
         '''
 
+        # Adaptive font size calculation
+
+        N = data.shape[0]
+        M = data.shape[1]
+
+        if M <= 3:
+            plt.rcParams['font.size'] = 30
+        elif M <= 6:
+            plt.rcParams['font.size'] = 20
+        elif M <= 12:
+            plt.rcParams['font.size'] = 12
+        elif M <= 24:
+            plt.rcParams['font.size'] = 6
+        else:
+            plt.rcParams['font.size'] = 12
+
         row_labels = kwargs.pop('row_labels', ["A", "B", "C", "D", "E", "F", "G", "H"])
         col_labels = kwargs.pop('col_labels', ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"])
 
@@ -39,17 +57,22 @@ class Visualization:
         cmap, norm = yield_cmap
         cmap.set_bad('darkgrey', 0.5)
         norm = matplotlib.colors.Normalize(vmin=0, vmax=100)
-        N = data.shape[0]
-        M = data.shape[1]
         r = 0.43
 
         x, y = np.meshgrid(np.arange(M), np.arange(N))
 
-        fig, ax = plt.subplots(figsize=(8.5, 4.8))
+        # Adaptive figure size calculation for various plate sizes
+        fig_width = 8.5
+        aspect_ratio = N / M
+        fig_height = fig_width * aspect_ratio
+        fig, ax = plt.subplots(figsize=(fig_width, fig_height))
+
         plt.gca().invert_yaxis()
         circles = [plt.Circle((j, i), radius=r) for j, i in zip(x.flat, y.flat)]
         col = PatchCollection(circles, array=masked_data.flatten(), cmap=cmap, norm=norm)
         ax.add_collection(col)
+
+        ax.set_aspect('equal')
 
         ax.set_xticks(np.arange(data.shape[1]), labels=col_labels, weight='bold')
         ax.set_yticks(np.arange(data.shape[0]), labels=row_labels, weight='bold')
@@ -74,7 +97,6 @@ class Visualization:
                 for j in range(M):
                     if not np.isnan(data[i, j]):
                         ax.text(j, i, int(round(data[i, j], 0)), ha="center", va="center", color="black")
-
 
         sm = plt.cm.ScalarMappable(cmap=cmap, norm=norm)
         cbar = plt.colorbar(sm, ticks=[0, 25, 50, 75, 100])
@@ -129,7 +151,7 @@ class Visualization:
                              color='#005573', alpha=0.1, transform=ax.get_xaxis_transform())
 
 
-        plt.grid(color='lightgrey', linestyle='--', which='both')
+        # plt.grid(color='lightgrey', linestyle='--', which='both')
 
         ax.set_xlim(xlim)
         ax.set_ylim(ylim)
@@ -314,6 +336,100 @@ class Visualization:
         else:
             plt.show()
 
+    @staticmethod
+    def visualize_plate_qualitative(data, path=None, well_labels=True, **kwargs):
+        '''
+        Visualizes a well plate as a heatmap of qualitative yields and saves the figure if a path is given.
+
+        Args:
+            data (list of lists): A nested list containing the qualitative yields of the reactions.
+            path (str|None, optional): Path to save the figure to. Defaults to None.
+        '''
+
+        col_labels = kwargs.get('col_labels', ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"])
+        row_labels = kwargs.get('row_labels', ["A", "B", "C", "D", "E", "F", "G", "H"])
+
+        data = np.array(data)
+        N, M = data.shape
+
+        if M <= 3:
+            plt.rcParams['font.size'] = 30
+        elif M <= 6:
+            plt.rcParams['font.size'] = 20
+        elif M <= 12:
+            plt.rcParams['font.size'] = 12
+        elif M <= 24:
+            plt.rcParams['font.size'] = 6
+        else:
+            plt.rcParams['font.size'] = 12
+
+        colors = ms_yield_cmap()
+        unique_labels = ['excellent', 'good', 'fair', 'poor','trace', 'none']
+        color_map = [colors[quality] for quality in unique_labels]
+        color_legend = [Patch(facecolor=color_map[i], edgecolor='black', label=unique_labels[i].capitalize()) for i in
+                        range(len(unique_labels))]
+
+        fig_width = 8.5
+        aspect_ratio = N / M
+        fig_height = fig_width * aspect_ratio
+        fig, ax = plt.subplots(figsize=(fig_width, fig_height))
+
+        r = 0.43
+        x, y = np.meshgrid(np.arange(M), np.arange(N))
+
+        circles = []
+        for i in range(N):
+            for j in range(M):
+                value = data[i, j]
+                circle_color = colors.get(value, colors['none'])
+                circles.append(plt.Circle((j, i), radius=r, color=circle_color))
+
+
+        col = PatchCollection(circles, match_original=True)
+        ax.add_collection(col)
+
+        ax.set_aspect('equal')
+        ax.set_xticks(np.arange(M), labels=col_labels, weight='bold', minor=False)
+        ax.set_yticks(np.arange(N), labels=row_labels, weight='bold', minor=False)
+        ax.set_xticks(np.arange(M + 1) - .5, minor=True)
+        ax.set_yticks(np.arange(N + 1) - .5, minor=True)
+        ax.tick_params(top=True, bottom=False, labeltop=True, labelbottom=False, length=0)
+        ax.tick_params(axis='y', which='major', pad=7)
+        ax.tick_params(which="minor", bottom=False, left=False)
+        ax.grid(which="minor", color="darkgrey", linestyle='-', linewidth=1)
+        ax.spines[:].set_visible(False)
+
+        fig.patch.set_facecolor('white')
+        fig.patch.set_alpha(0.0)
+        ax.set_facecolor('lightgrey')
+
+        plt.gca().invert_yaxis()
+
+        # Add legend, positioned below the heatmap in a horizontal line, without box
+        ax.legend(handles=color_legend, bbox_to_anchor=(0.5, -0.1), loc='upper center', borderaxespad=0.,
+                 ncol=len(unique_labels), frameon=False)
+        # # Add legend
+        # ax.legend(handles=color_legend,  bbox_to_anchor=(0.5, -0.05), loc='upper center', borderaxespad=0., frameon = False)
+
+        fig.tight_layout()
+        if path:
+            plt.savefig(path, dpi=600, bbox_inches='tight')
+            plt.close()
+        else:
+            plt.show()
+
+
+def ms_yield_cmap():
+    # Define color map for qualitative labels
+    colors = {
+        'excellent': '#236c7d',  # Dark Green
+        'good': '#4b8f90',       # Blue Green
+        'fair': '#7db7aa',       # Light Green
+        'poor': '#d4ebdb',       # Sand
+        'trace': '#fcfef3',      # White
+        'none': '#bdbdbd'        # Grey
+    }
+    return colors
 
 if __name__ == '__main__':
     array_8x12 = np.random.randint(0, 95, size=(8, 12))

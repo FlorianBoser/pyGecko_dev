@@ -3,6 +3,7 @@ from pygecko.gc_tools.peak import Peak
 from pygecko.gc_tools.analyte import Analyte
 from pygecko.gc_tools.utilities import Utilities
 from pygecko.visualization import Visualization
+import warnings
 
 
 
@@ -94,8 +95,13 @@ class Injection:
         '''
 
         peak = self.flag_peak(rt, flag='standard', tolerance=tolerance)
-        self.internal_standard = Analyte(peak.rt, name=name, smiles=smiles)
-        peak.analyte = self.internal_standard
+        if peak:
+            self.internal_standard = Analyte(peak.rt, name=name, smiles=smiles)
+            peak.analyte = self.internal_standard
+        else:
+            warnings.warn(f'No peak found within the tolerance in {self.sample_name}.', UserWarning)
+
+
 
     def flag_peak(self, rt: float, flag: str|None = None, tolerance: float = 0.05,
                   analyte: Analyte|None = None) -> None|Peak:
@@ -150,14 +156,17 @@ class Injection:
                     deviation = abs(ri-peak.ri)
                     candidates[deviation] = peak
         if candidates:
-            if len(candidates) > 1:
+            if len(candidates) > 0: 
                 for key in list(candidates.keys()):
                     if candidates[key].flag == 'standard':
                         del candidates[key]
-            peak = candidates[min(candidates)]
-            if analyte:
-                peak.analyte = analyte
-            return peak
+            if candidates:  # Check again after potential deletion
+                peak = candidates[min(candidates)]
+                if analyte:
+                    peak.analyte = analyte
+                return peak
+            else:
+                return  None
         else:
             return None
 

@@ -73,9 +73,11 @@ class Peak_Detection_FID:
         #TODO: Implement S/N.
         height = analysis_settings.pop('height', 0)
 
+        # Finding of Peaks
         peak_indices, peak_properties = find_peaks(chrom_corr[1], prominence=prominence, width=width,
                                                    height=height)
         peak_widths, peak_heights = peak_properties['widths'], peak_properties['peak_heights']
+        
         peak_boarders = Peak_Detection_FID.__detect_borders(chrom_corr, peak_indices, peak_widths,
                                                              analysis_settings)
         peak_boarders = Peak_Detection_FID.__resolve_boarder_overlap(peak_boarders, peak_indices, chrom_corr)

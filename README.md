@@ -3,6 +3,10 @@
 
 > pyGecko an open-source Python library for the parsing, processing and analysis of GC-MS and GC-FID raw data.
 
+## Acknowledgement
+
+This modified version of pyGecko builds upon the original [pyGecko](https://github.com/FelixKatz77/pyGecko) library, created for the parsing, processing, and analysis of GC-MS and GC-FID raw data.
+
 With increasing amounts of analytical and metadata generated in HTE, data processing and analysis quickly become a 
 workflow's limiting step if conducted manually. The automated processing of analytical data opens up time for chemists 
 to focus on relevant outcomes, enables the standardized storage of reaction data, and facilitates the integration of 
@@ -14,6 +18,7 @@ times, the mass of a molecular ion or fragment and spectral comparison. Quantifi
 can be performed for GC-FID measurements. Results of an analysis as well as chromatograms and spectra can be visualized 
 and reported in standardized formats like the Open Reaction Database (ORD) schema. pyGecko is designed to be easily 
 integrated into automated workflows and can be used as a stand-alone tool or as a python library.
+This fork implements functionalities for a qualitative yield estimation soley based on MS data.
 
 ## Installation
 

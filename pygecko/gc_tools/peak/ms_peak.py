@@ -25,8 +25,8 @@ class MS_Peak(Peak):
     __slots__ = 'mass_spectrum'
 
     def __init__(self, rt: float, height: float, width: float, boarders: np.ndarray, mass_spectrum: np.ndarray,
-                 area: float):  # FBS changed area from None to float
-        super().__init__(rt, height, width, boarders, area) # FBS changed area = area
+                 area: float):
+        super().__init__(rt, height, width, boarders, area)
         self.mass_spectrum = mass_spectrum
 
     def view_mass_spectrum(self, path:str|None=None, **kwargs) -> None:

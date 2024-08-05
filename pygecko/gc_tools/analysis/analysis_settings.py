@@ -36,10 +36,10 @@ class Analysis_Settings:
     boarder_threshold: int|None
     boarder_window: int|None
     scan_rate: float
-    ms_quantification_mode: str|None # FBS added ms_quantification_mode
+    ms_quantification_mode: str|None
 
     __slots__ = 'sn', 'time_range', 'indices_range', 'width', 'prominence_ms', 'prominence_fid', 'trace_prominence', 'height', \
-                'savgol_window', 'max_half_window', 'boarder_threshold', 'boarder_window', 'scan_rate', 'ms_quantification_mode' # FBS added ms_quantification_mode
+                'savgol_window', 'max_half_window', 'boarder_threshold', 'boarder_window', 'scan_rate', 'ms_quantification_mode'
 
     def __init__(self, chromatogram:np.ndarray):
         self.sn = 5
@@ -55,7 +55,7 @@ class Analysis_Settings:
         self.boarder_threshold = None
         self.boarder_window = None
         self.scan_rate = chromatogram[0, 2] - chromatogram[0, 1]
-        self.ms_quantification_mode = None # FBS added ms_quantification_mode
+        self.ms_quantification_mode = None
 
     def __str__(self) -> str:
         return f'Analysis_Settings:\nSignal to Noise Ratio: {self.sn}\nTime Range: {self.time_range}\n' \
@@ -91,7 +91,7 @@ class Analysis_Settings:
             raise KeyError(f'"{key}" is not a valid setting.')
 
 
-    def __check_settings(self, setting:str, value:int|float|tuple|str) -> bool: # FBS added str
+    def __check_settings(self, setting:str, value:int|float|tuple|str) -> bool:
 
         '''
         Returns True if setting is valid.
@@ -106,7 +106,7 @@ class Analysis_Settings:
 
         options = {'sn': int, 'time_range': tuple, 'width': (int, float), 'prominence_ms': int, 'prominence_fid': int,
                    'trace_prominence': int, 'height': int, 'savgol_window': int, 'max_half_window': int,
-                   'boarder_threshold': int, 'boarder_window': int, 'ms_quantification_mode': str} # FBS added ms_quantification_mode
+                   'boarder_threshold': int, 'boarder_window': int, 'ms_quantification_mode': str}
         if setting in options.keys():
             if isinstance(value, options[setting]):
                 return True

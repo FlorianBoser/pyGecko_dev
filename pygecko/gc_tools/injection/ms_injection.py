@@ -91,8 +91,7 @@ class MS_Injection(Injection):
         mol = Chem.MolFromSmiles(smiles)
         mz = round(Descriptors.ExactMolWt(mol), 0)
         peak = self.__match_mz_mol(mz, smiles=smiles)
-        if peak and peak.flag != 'standard':  # FBS for MS quantification the flag standard is not yet set at this point - however, might be used without standard anyways
-        #if peak:
+        if peak and peak.flag != 'standard':  
             analyte = Analyte(peak.rt, smiles=smiles)
             peak.analyte = analyte
         return peak
@@ -116,23 +115,20 @@ class MS_Injection(Injection):
         for rt, peak in self.peaks.items():
             if mz in peak.mass_spectrum['mz']:
                 index = np.where(peak.mass_spectrum['mz'] == mz)[0]
-                # FBS peak.mass_spectrum['rel_intensity'][index][0] > 4 seems to be way to high: I checked for Standard Dodecane and it was only 1.64
-                # Changed to 2.0
-                # print(str(self.plate_pos) + " : " + str(rt)+ " : " + str(peak.mass_spectrum['rel_intensity'][index][0]))
+
                 if peak.mass_spectrum['rel_intensity'][index][0] > 2.0 and mz > peak.mass_spectrum['mz'].max() * (
-                        2 / 3):  # 2/3
-                    # GC/MS 6 has relative low molecular/parent peaks, 2.0 should be fine
+                        2 / 3):  
+                    
                     isotope_error = self.__isotope_check(smiles, peak, mz)
                     if isotope_error:
                         candidates[isotope_error] = peak
         if candidates:
             if len(candidates) > 1:
-                # FBS Print information for manual inspection of the peaks with multiple peaks wich could be the analyte
-                # Extract the retention times of the peaks in candidates
+
                 retention_times = [peak.rt for peak in candidates.values()]
                 print(f'{len(candidates)} peaks with m/z {mz} fitting the calculated isotope pattern were found for {self.sample_name:<20}. Retention times: {str(retention_times):<50}')
             # peak = candidates[min(candidates)]  # selects the peak with the lowest isotope error
-            # FBS: Due to Regioisomers and Isomers in the project with CSN and JLT, we select the peak with the highest area, within 5% of the isotope error
+            # Due to Regioisomers in this project, we select the peak with the highest area, which is 5% of the isotope error
             candidates_by_area = {}
             for p in candidates.values():
                 candidates_by_area[p.area] = p
@@ -142,7 +138,7 @@ class MS_Injection(Injection):
             return peak
         return None
 
-    def pick_peaks(self, inplace: bool = True,  **kwargs: dict) -> None|dict[float, MS_Peak]:        # FBS Addition of a discovery mode
+    def pick_peaks(self, inplace: bool = True,  **kwargs: dict) -> None|dict[float, MS_Peak]:      
 
         '''
         Picks peaks from the injection's chromatogram.

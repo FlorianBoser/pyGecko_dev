@@ -6,7 +6,7 @@ from pygecko.gc_tools.peak.fid_peak import FID_Peak
 from pygecko.gc_tools.peak.ms_peak import MS_Peak
 from pygecko.gc_tools.utilities import Utilities
 
-from scipy.integrate import simpson # FBS added for MS quantification
+from scipy.integrate import simpson
 
 
 
@@ -32,12 +32,10 @@ class Peak_Detection_MS:
         '''
 
         peak_indices, peak_rts, peak_heights, peak_widths, peak_boarders, peak_areas = Peak_Detection_MS.__detect_peaks_scipy(
-            chromatogram, analysis_settings) # FBS added peak_areas for MS quantification similar to FID
-        # if ms_quantification_mode == 'area':
-        # TODO: Do we need a handling for different quantification modes?
+            chromatogram, analysis_settings) 
 
         spectra = Peak_Detection_MS.__extract_mass_spectrum(scans, peak_rts, peak_indices, analysis_settings)
-        peaks = Peak_Detection_MS.__initialize_peaks(peak_rts, peak_heights, peak_widths, peak_boarders, spectra, peak_areas) # FBS added peak_areas
+        peaks = Peak_Detection_MS.__initialize_peaks(peak_rts, peak_heights, peak_widths, peak_boarders, spectra, peak_areas)
         return peaks
 
     @staticmethod
@@ -59,29 +57,23 @@ class Peak_Detection_MS:
         time = chromatogram[0]
         intensities = chromatogram[1]
 
-        # min_height = analysis_settings.pop('height', np.min(intensities) * 50)
-        # FBS GC/MS 6 catches a lot of peaks and therefore the min_height is set to a higher value to ignore background peaks
-        min_height = analysis_settings.pop('height', np.min(intensities[intensities > 0]) * 50)    # 184
+        min_height = analysis_settings.pop('height', np.min(intensities[intensities > 0]) * 50)   
         prominence = analysis_settings.pop('prominence_ms', 1)
         prominence = np.median(intensities) * prominence
-        # FID uses this prominence # prominence_fid = analysis_settings.pop('prominence_ms', np.mean(intensities))
         width = analysis_settings.pop('width', 0)
 
-        # Finding of peaks
         peak_indices, peak_properties = find_peaks(intensities,
                                                    prominence=prominence, width=width, height=min_height, rel_height=1)
-        # TODO: Werte herausschreiben und Veränderungen notieren
         peak_heights = peak_properties['peak_heights']
         peak_widths = peak_properties['widths'] * analysis_settings.scan_rate
 
         peak_boarders = np.vstack((peak_properties['left_ips'], peak_properties['right_ips'])).transpose()
         peak_boarders = (peak_boarders * analysis_settings.scan_rate) + time[0]
-        # TODO: Is a special treatment of the boarders necessary? See FID peak detection
-        # FBS added peak_areas for MS quantification similar to FID
+
         peak_areas = Peak_Detection_MS.__calculate_areas(chromatogram, peak_boarders)
 
         peak_rts = time[peak_indices]
-        return peak_indices, peak_rts, peak_heights, peak_widths, peak_boarders, peak_areas # FBS added peak_areas for MS quantification similar to FID
+        return peak_indices, peak_rts, peak_heights, peak_widths, peak_boarders, peak_areas
 
     @staticmethod
     def __extract_mass_spectrum(scans: pd.DataFrame, peak_rts:np.ndarray, peak_indices:np.ndarray,
@@ -99,8 +91,7 @@ class Peak_Detection_MS:
         Returns:
             dict[float:dict[float:float]]: Mass spectra of the peaks.
         '''
-        # TODO: Get error handling for the prominence beiing to high!
-        prominence = analysis_settings.pop('trace_prominence', 220) # default 500
+        prominence = analysis_settings.pop('trace_prominence', 220) 
 
         mass_spectrums = {}
         for i in peak_rts:
@@ -118,7 +109,7 @@ class Peak_Detection_MS:
     @staticmethod
     def __initialize_peaks(peak_rts: np.ndarray, peak_heights: np.ndarray, peak_widths: np.ndarray,
                            peak_boarders: np.ndarray,
-                           mass_spectra: dict[float:dict[float:float]], peak_areas: np.ndarray) -> dict[float:FID_Peak]: # FBS added peak_areas and quantification_mode
+                           mass_spectra: dict[float:dict[float:float]], peak_areas: np.ndarray) -> dict[float:FID_Peak]: 
 
         '''
         Returns a dictionary of MS peaks.
@@ -139,7 +130,7 @@ class Peak_Detection_MS:
         peaks = {}
         for i, rt in enumerate(peak_rts):
             rt_min = round(rt, 3)
-            area = peak_areas[i]  # FBS added for discovery mode with area quantification
+            area = peak_areas[i]  
             intensities = list(mass_spectra[rt].values())
             rel_intensities = np.divide(intensities, np.max(intensities)) * 100
             l = [(i, j, k) for i, j, k in zip(mass_spectra[rt].keys(), intensities, rel_intensities)]
@@ -149,7 +140,6 @@ class Peak_Detection_MS:
             peaks[peak.rt] = peak
         return peaks
 
-    # Added by FBS for MS quantification
     @staticmethod
     def __calculate_areas(chromatogram: np.ndarray, boarders: np.ndarray) -> list[float]:
 

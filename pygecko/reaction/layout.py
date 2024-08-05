@@ -67,7 +67,5 @@ class Product_Layout:
             # If reading fails, raise an informative error
             raise IOError(f"Failed to read the file: {e}")
 
-        #self.layout = pd.read_csv(layout_file)
         self.dimensions = self.layout.shape[1]
         self.array = self.layout.to_numpy(dtype=str)
-        # print('done')

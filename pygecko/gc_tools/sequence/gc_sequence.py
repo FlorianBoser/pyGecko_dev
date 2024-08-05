@@ -80,7 +80,7 @@ class GC_Sequence:
 
         del self.injections[injection_name]
 
-    def pick_peaks(self, **kwargs):     # FBS Addition of MS Quantification Mode for rough estimates in discovery with MS only
+    def pick_peaks(self, **kwargs):
 
         '''
         Picks peaks from the injections' chromatograms.
@@ -90,7 +90,7 @@ class GC_Sequence:
         '''
 
         for injection in self.injections.values():
-            injection.pick_peaks( **kwargs)     # FBS added ms_quantification_mode
+            injection.pick_peaks( **kwargs)   
 
     def set_internal_standard(self, rt:float|int, tolerance:float=0.05, name:str=None, smiles:str=None) -> None:
 

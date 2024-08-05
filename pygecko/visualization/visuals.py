@@ -3,7 +3,7 @@ from typing import Union
 from typing import TYPE_CHECKING
 from pygecko.gc_tools.utilities import Utilities
 import matplotlib.pyplot as plt
-from matplotlib.patches import Patch # FBS added for MS qualitative visualization
+from matplotlib.patches import Patch
 from matplotlib.collections import PatchCollection
 import matplotlib
 from matplotlib.ticker import (MultipleLocator)
@@ -35,22 +35,9 @@ class Visualization:
         '''
 
         # Adaptive font size calculation
-        # plt.rcParams['font.size'] = min(20, max(8.5 / max(N, M), 5))    # FBS
-        # plt.rcParams['font.size'] = plt.rcParams['font.size'] * (96 / N * M) ** 0.5 # FBS
-        # Adaptive font size calculation    # FBS
-        N = data.shape[0]   # FBS
-        M = data.shape[1]   # FBS
-        # total_wells = N * M
-        # if total_wells <= 24:
-        #     plt.rcParams['font.size'] = 20
-        # elif total_wells <= 48:
-        #     plt.rcParams['font.size'] = 15
-        # elif total_wells <= 96:
-        #     plt.rcParams['font.size'] = 12
-        # elif total_wells <= 384:
-        #     plt.rcParams['font.size'] = 6
-        # else:
-        #     plt.rcParams['font.size'] = 12
+
+        N = data.shape[0]
+        M = data.shape[1]
 
         if M <= 3:
             plt.rcParams['font.size'] = 30
@@ -72,25 +59,20 @@ class Visualization:
         norm = matplotlib.colors.Normalize(vmin=0, vmax=100)
         r = 0.43
 
-
-
         x, y = np.meshgrid(np.arange(M), np.arange(N))
 
-        # Adaptive figure size calculation for various plate sizes  # FBS
+        # Adaptive figure size calculation for various plate sizes
         fig_width = 8.5
         aspect_ratio = N / M
         fig_height = fig_width * aspect_ratio
         fig, ax = plt.subplots(figsize=(fig_width, fig_height))
 
-
-        # fig, ax = plt.subplots(figsize=(8.5, 4.8))
         plt.gca().invert_yaxis()
         circles = [plt.Circle((j, i), radius=r) for j, i in zip(x.flat, y.flat)]
         col = PatchCollection(circles, array=masked_data.flatten(), cmap=cmap, norm=norm)
         ax.add_collection(col)
 
-        ax.set_aspect('equal')  # FBS Ensure circles remain round
-
+        ax.set_aspect('equal')
 
         ax.set_xticks(np.arange(data.shape[1]), labels=col_labels, weight='bold')
         ax.set_yticks(np.arange(data.shape[0]), labels=row_labels, weight='bold')
@@ -110,14 +92,11 @@ class Visualization:
         fig.patch.set_alpha(0.0)
         ax.set_facecolor('lightgrey')
 
-
-
         if well_labels:
             for i in range(N):
                 for j in range(M):
                     if not np.isnan(data[i, j]):
                         ax.text(j, i, int(round(data[i, j], 0)), ha="center", va="center", color="black")
-
 
         sm = plt.cm.ScalarMappable(cmap=cmap, norm=norm)
         cbar = plt.colorbar(sm, ticks=[0, 25, 50, 75, 100])
@@ -357,8 +336,6 @@ class Visualization:
         else:
             plt.show()
 
-# FBS added new functios for creating Visuals for the MS only mode for a rough quantification using GC/MS without GC/FID
-
     @staticmethod
     def visualize_plate_qualitative(data, path=None, well_labels=True, **kwargs):
         '''
@@ -369,15 +346,12 @@ class Visualization:
             path (str|None, optional): Path to save the figure to. Defaults to None.
         '''
 
-        # col_labels = kwargs.get('col_labels', ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"])
-        # row_labels = kwargs.get('row_labels', ["A", "B", "C", "D", "E", "F", "G", "H"])
         col_labels = kwargs.get('col_labels', ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"])
         row_labels = kwargs.get('row_labels', ["A", "B", "C", "D", "E", "F", "G", "H"])
 
         data = np.array(data)
         N, M = data.shape
 
-        # Determine font size based on dimensions
         if M <= 3:
             plt.rcParams['font.size'] = 30
         elif M <= 6:
@@ -424,7 +398,6 @@ class Visualization:
         ax.tick_params(which="minor", bottom=False, left=False)
         ax.grid(which="minor", color="darkgrey", linestyle='-', linewidth=1)
         ax.spines[:].set_visible(False)
-
 
         fig.patch.set_facecolor('white')
         fig.patch.set_alpha(0.0)

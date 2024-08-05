@@ -71,7 +71,6 @@ class Analysis:
 
         results_df = pd.DataFrame(columns=['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],
                                       index=['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'])
-        # TODO: Other wellplate formats than 12x8 are not supported at this point
 
         results_dict = Analysis.__match_and_quantify(ms_sequence, fid_sequence, layout, mode, index)
 
@@ -164,7 +163,6 @@ class Analysis:
                 yield_dict[injection.sample_name] = yield_
         return yield_dict
 
-    # FBS added following methods for MS quantification in the Analysis class
     @staticmethod
     def calc_plate_ms_only_yield(ms_sequence: MS_Sequence, layout: Reaction_Array|Product_Array,
                          path: str|None = None):
@@ -182,7 +180,7 @@ class Analysis:
             np.ndarray: Numpy array containing the quantification results, retention times and smiles for the analytes.
         '''
 
-        return Analysis.__ms_only_quantify_plate(ms_sequence, layout, path, mode='yield', ms_quantification_mode='area', relative_to='standard') # FBS added ms_quantification_mode and relative_to
+        return Analysis.__ms_only_quantify_plate(ms_sequence, layout, path, mode='yield', ms_quantification_mode='area', relative_to='standard')
 
 
     @staticmethod
@@ -203,24 +201,20 @@ class Analysis:
         Returns:
             np.ndarray: Numpy array containing the quantification results, retention times and smiles for the analytes.
         '''
-
-        # FBS Addition of dynamic format for the results_df
-        # results_df = pd.DataFrame(columns=['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],
-        #                               index=['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'])
-
+        # Dynamic Well plate formatting
         rows = [chr(i) for i in range(65, 65 + layout.array.shape[0])]
         columns = [str(i) for i in range(1, layout.array.shape[1] + 1)]
         results_df = pd.DataFrame(columns=columns, index=rows)
 
 
-        results_dict = Analysis.__ms_quantify(ms_sequence, layout, mode, ms_quantification_mode, relative_to, index ) # TODO: change methode name
+        results_dict = Analysis.__ms_quantify(ms_sequence, layout, mode, ms_quantification_mode, relative_to, index ) 
 
         for key, value in results_dict.items():
             results_df.loc[key[0], key[1:]] = value
 
         results_array = results_df.to_numpy()
         results_array = np.array([row.tolist() for row in results_array])
-        dtype = np.dtype([('quantity', 'U20'), ('rt_ms', float), ('rt_fid', float)])    # FBS changed quantity to str for rough MS quantification
+        dtype = np.dtype([('quantity', 'U20'), ('rt_ms', float), ('rt_fid', float)])
         results_array = unstructured_to_structured(results_array[:,:,:-1], dtype=dtype)
         if path:
             if mode == 'yield':
@@ -290,16 +284,16 @@ class Analysis:
                         print (f'No standard found for {ms_injection.sample_name}.')
 
 
-                # Classify the product ratio into qualitative categories for quantification
-                if product_ratio >= 70:     # 80
+                # Classification of the product ratio into qualitative categories for quantification
+                if product_ratio >= 70:
                     yield_ = 'excellent'
-                elif product_ratio >= 50:   # 60
+                elif product_ratio >= 50:
                     yield_ = 'good'
-                elif product_ratio >= 20:   # 30
+                elif product_ratio >= 20:
                     yield_ = 'fair'
-                elif product_ratio >= 5:    # 30
+                elif product_ratio >= 5:
                     yield_ = 'poor'
-                elif product_ratio < 5:    # 30
+                elif product_ratio < 5:
                     yield_ = 'trace'
 
                 if mode == 'conv':
@@ -309,7 +303,3 @@ class Analysis:
             else:
                 results_dict[pos] = [np.nan, np.nan, np.nan, '']
         return results_dict
-
-# TODO: B1 should not be excellent, it selected once again the standard as the analyte
-# TODO: Generate a overview of the results in a heatmap
-# TODO: fix downstream errors with the string instead of int

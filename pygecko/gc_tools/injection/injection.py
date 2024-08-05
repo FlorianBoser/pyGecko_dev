@@ -156,7 +156,7 @@ class Injection:
                     deviation = abs(ri-peak.ri)
                     candidates[deviation] = peak
         if candidates:
-            if len(candidates) > 0: # 1
+            if len(candidates) > 0: 
                 for key in list(candidates.keys()):
                     if candidates[key].flag == 'standard':
                         del candidates[key]

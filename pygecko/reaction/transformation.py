@@ -36,7 +36,6 @@ class Transformation:
             print('Number of Substrates provided does not match transform!')
         else:
             mols = [Chem.MolFromSmiles(s) for s in substrates]
-            #mols = [Chem.AddHs(Chem.MolFromSmiles(s)) for s in substrates] #TODO: Fix this
             products = self.transform.RunReactants(mols)
             return Chem.MolToSmiles(products[0][0])
 

@@ -179,7 +179,7 @@ class PDF_Report(Report):
         return p_metadata
 
 
-    # TODO: values in report_df that correspond to unused wells must be Nan
+  
 
     def __create_results_table_quantification(self):
         alignment = 'CENTRE'

@@ -64,7 +64,7 @@ class MS_Injection(Injection):
         for rt, peak in self.peaks.items():
             if mz in peak.mass_spectrum['mz']:
                 index = np.where(peak.mass_spectrum['mz'] == mz)[0]
-                if peak.mass_spectrum['rel_intensity'][index][0] > 4 and mz > peak.mass_spectrum['mz'].max()*(2/3):
+                if peak.mass_spectrum['rel_intensity'][index][0] > 2 and mz > peak.mass_spectrum['mz'].max()*(2/3):
                     candidates.append(peak)
         if candidates:
             if len(candidates) > 1:
@@ -91,7 +91,7 @@ class MS_Injection(Injection):
         mol = Chem.MolFromSmiles(smiles)
         mz = round(Descriptors.ExactMolWt(mol), 0)
         peak = self.__match_mz_mol(mz, smiles=smiles)
-        if peak:
+        if peak and peak.flag != 'standard':  
             analyte = Analyte(peak.rt, smiles=smiles)
             peak.analyte = analyte
         return peak
@@ -115,25 +115,37 @@ class MS_Injection(Injection):
         for rt, peak in self.peaks.items():
             if mz in peak.mass_spectrum['mz']:
                 index = np.where(peak.mass_spectrum['mz'] == mz)[0]
-                if peak.mass_spectrum['rel_intensity'][index][0] > 4 and mz > peak.mass_spectrum['mz'].max() * (
-                        2 / 3):  # TODO: Check if this is a good decision.
+
+                if peak.mass_spectrum['rel_intensity'][index][0] > 2.0 and mz > peak.mass_spectrum['mz'].max() * (
+                        2 / 3):  
+                    
                     isotope_error = self.__isotope_check(smiles, peak, mz)
                     if isotope_error:
                         candidates[isotope_error] = peak
         if candidates:
             if len(candidates) > 1:
-                print(f'Multiple peaks with m/z {mz} fitting the calculated isotope pattern were found for {self.sample_name}.')
-            peak = candidates[min(candidates)]
+
+                retention_times = [peak.rt for peak in candidates.values()]
+                print(f'{len(candidates)} peaks with m/z {mz} fitting the calculated isotope pattern were found for {self.sample_name:<20}. Retention times: {str(retention_times):<50}')
+            # peak = candidates[min(candidates)]  # selects the peak with the lowest isotope error
+            # Due to Regioisomers in this project, we select the peak with the highest area, which is 5% of the isotope error
+            candidates_by_area = {}
+            for p in candidates.values():
+                candidates_by_area[p.area] = p
+            peak = candidates_by_area[max(candidates_by_area)]
+
             peak.analyte = Analyte(peak.rt, smiles=smiles)
             return peak
         return None
-    def pick_peaks(self, inplace: bool = True, **kwargs: dict) -> None|dict[float, MS_Peak]:
+
+    def pick_peaks(self, inplace: bool = True,  **kwargs: dict) -> None|dict[float, MS_Peak]:      
 
         '''
         Picks peaks from the injection's chromatogram.
 
         Args:
             inplace (bool): If True, the peaks are assigned to the injection's peaks attribute. Default is True.
+            ms_quantification_mode (str): Methode of MS quantification ('height' or 'area'). Default is None.
             **kwargs: Keyword arguments for the peak picking.
 
         Returns:

@@ -8,6 +8,7 @@ config = configparser.ConfigParser()
 config_path = Path(__file__).parent.parent.joinpath('config.ini')
 config.read(config_path)
 msconvert_path = config.get('msConvertSettings','exe_path')
+print(msconvert_path)
 
 
 

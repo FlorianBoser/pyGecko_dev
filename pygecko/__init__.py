@@ -7,8 +7,8 @@ import configparser
 import pathlib
 from pathlib import Path
 
-__version__ = '0.1.0'
-__author__ = 'Felix Katzenburg'
+__version__ = '0.1.1'
+__author__ = 'Felix Katzenburg, Florian Boser'
 __credits__ = 'Muenster University'
 
 if __name__ == '__main__':

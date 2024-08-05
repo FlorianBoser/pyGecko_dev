@@ -1,4 +1,4 @@
-# pyGecko
+# pyGecko MS Quantification
 <img src="docs/pyGecko_icon.png" alt="pyGecko_Logo" width="300" height="300"/>
 
 > pyGecko an open-source Python library for the parsing, processing and analysis of GC-MS and GC-FID raw data.

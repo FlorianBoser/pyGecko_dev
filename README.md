@@ -5,7 +5,7 @@
 
 ## Acknowledgement
 
-This modified version of pyGecko builds upon the original [pyGecko](https://github.com/FelixKatz77/pyGecko) library, created for the parsing, processing, and analysis of GC-MS and GC-FID raw data.
+This modified version of pyGecko builds upon the original [pyGecko](https://github.com/FelixKatz77/pyGecko) library and [publication](https://chemrxiv.org/engage/chemrxiv/article-details/66adfc465101a2ffa8001761), created for the parsing, processing, and analysis of GC-MS and GC-FID raw data.
 This fork pyLurch implements functionalities for a qualitative yield estimation soley based on MS data.
 
 

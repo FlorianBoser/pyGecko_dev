@@ -1,7 +1,15 @@
-# pyGecko
+# pyLurch: pyGecko MS Quantification
 <img src="docs/pyGecko_icon.png" alt="pyGecko_Logo" width="300" height="300"/>
 
 > pyGecko an open-source Python library for the parsing, processing and analysis of GC-MS and GC-FID raw data.
+
+## Acknowledgement
+
+This modified version of pyGecko builds upon the original [pyGecko](https://github.com/FelixKatz77/pyGecko) library and [publication](https://chemrxiv.org/engage/chemrxiv/article-details/66adfc465101a2ffa8001761), created for the parsing, processing, and analysis of GC-MS and GC-FID raw data.
+This fork pyLurch implements functionalities for a qualitative yield estimation soley based on MS data.
+
+
+## About
 
 With increasing amounts of analytical and metadata generated in HTE, data processing and analysis quickly become a 
 workflow's limiting step if conducted manually. The automated processing of analytical data opens up time for chemists 
@@ -24,7 +32,7 @@ integrated into automated workflows and can be used as a stand-alone tool or as 
 pyGecko can be installed via pip:
 
 ```bash 
-git clone https://github.com/FelixKatz77/pyGecko.git
+git clone https://github.com/FlorianBoser/pyLurch.git
 cd pyGecko
 pip install ./
 ```
@@ -39,7 +47,7 @@ This will prompt you to specify the path to the msConvert.exe file:
 ```bash
 Please provide the path to the msConvert executable or specify it in the config.ini:
 ```
-After that pyGecko is ready to use.
+After that pyLurch is ready to use.
 
 
 ## Documentation
@@ -48,8 +56,7 @@ The documentation for pyGecko can be found [here](https://pygecko.readthedocs.io
 ## Usage
 For non-automated workflows pyGecko is best used with jupyter notebooks. The notebooks folder of the repository contains
 examples for the usage of pyGecko for the quantitative analysis of reaction outcomes and spectral matching. The Python 
-scripts used to perform the data processing for the publication can be found in the examples folder. GC-MS and GC-FID 
-raw data for all experiments is available on Zenodo.
+scripts used to perform the data processing for the publication can be found in the examples folder. 
 
 ## Supported File Formats
 pyGecko supports the following file formats:
@@ -63,3 +70,8 @@ pyGecko supports the following file formats:
 
 > [!NOTE]
 > To achieve the best performance, we recommend using the .mzML file format for GC-MS data.
+
+## Citation & Reference Paper
+
+[Calibration-Free Quantification and Automated Data Analysis for High-Throughput Reaction Screening](https://chemrxiv.org/engage/chemrxiv/article-details/66adfc465101a2ffa8001761)
+Felix Katzenburg, Florian Boser, Felix Schäfer, Philipp Pflüger, Calibration-Free Quantification and Automated Data Analysis for High-Throughput Reaction Screening, ChemRxiv, 2024; doi:10.26434/chemrxiv-2024-1ctkh

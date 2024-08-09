@@ -1,0 +1,3 @@
+[submodule "BDE-db2"]
+	path = BDE-db2
+	url = https://github.com/patonlab/BDE-db2.git

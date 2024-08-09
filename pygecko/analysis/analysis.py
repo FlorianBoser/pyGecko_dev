@@ -261,12 +261,16 @@ class Analysis:
             pos = ms_injection.get_plate_position()
             if mode == 'yield':
                 analyte = layout.get_product(ms_injection.get_plate_position())
+                fragments = layout.get_fragments(ms_injection.get_plate_position())
+                # TODO: Should get fragments here as well
                 pass
             elif mode == 'conv':
                 analyte = layout.get_substrate(pos, index=index)
+                fragments = layout.get_fragments(ms_injection.get_plate_position())
             else:
                 raise ValueError('Mode must be either yield or conv')
-            mz_match = ms_injection.match_mol(analyte)
+            # mz_match = ms_injection.match_mol(analyte)
+            mz_match = ms_injection.match_mol_and_frags(analyte, fragments)
 
             if mz_match:
 

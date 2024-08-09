@@ -61,7 +61,7 @@ class Peak_Detection_MS:
 
         # min_height = analysis_settings.pop('height', np.min(intensities) * 50)
         # FBS GC/MS 6 catches a lot of peaks and therefore the min_height is set to a higher value to ignore background peaks
-        min_height = analysis_settings.pop('height', np.min(intensities[intensities > 0]) * 184)    # 50
+        min_height = analysis_settings.pop('height', np.min(intensities[intensities > 0]) * 50)    # 184
         prominence = analysis_settings.pop('prominence_ms', 1)
         prominence = np.median(intensities) * prominence
         # FID uses this prominence # prominence_fid = analysis_settings.pop('prominence_ms', np.mean(intensities))

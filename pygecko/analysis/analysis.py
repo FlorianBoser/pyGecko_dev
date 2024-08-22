@@ -284,17 +284,24 @@ class Analysis:
                         print (f'No standard found for {ms_injection.sample_name}.')
 
 
-                # Classification of the product ratio into qualitative categories for quantification
-                if product_ratio >= 70:
-                    yield_ = 'excellent'
-                elif product_ratio >= 50:
-                    yield_ = 'good'
-                elif product_ratio >= 20:
-                    yield_ = 'fair'
+                if product_ratio >= 25:
+                    yield_ = 'major hit'
                 elif product_ratio >= 5:
-                    yield_ = 'poor'
+                    yield_ = 'minor hit'
                 elif product_ratio < 5:
                     yield_ = 'trace'
+
+                # Classification of the product ratio into qualitative categories for quantification
+                # if product_ratio >= 70:
+                #     yield_ = 'excellent'
+                # elif product_ratio >= 50:
+                #     yield_ = 'good'
+                # elif product_ratio >= 20:
+                #     yield_ = 'fair'
+                # elif product_ratio >= 5:
+                #     yield_ = 'poor'
+                # elif product_ratio < 5:
+                #     yield_ = 'trace'
 
                 if mode == 'conv':
                     yield_ = 100 - yield_

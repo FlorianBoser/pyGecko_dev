@@ -364,7 +364,9 @@ class Visualization:
             plt.rcParams['font.size'] = 12
 
         colors = ms_yield_cmap()
-        unique_labels = ['excellent', 'good', 'fair', 'poor','trace', 'none']
+        # unique_labels = ['excellent', 'good', 'fair', 'poor','trace', 'none']
+        unique_labels = ['major hit', 'minor hit','trace', 'none']
+
         color_map = [colors[quality] for quality in unique_labels]
         color_legend = [Patch(facecolor=color_map[i], edgecolor='black', label=unique_labels[i].capitalize()) for i in
                         range(len(unique_labels))]
@@ -421,14 +423,23 @@ class Visualization:
 
 def ms_yield_cmap():
     # Define color map for qualitative labels
+    # colors = {
+    #     'excellent': '#236c7d',  # Dark Green
+    #     'good': '#4b8f90',       # Blue Green
+    #     'fair': '#7db7aa',       # Light Green
+    #     'poor': '#d4ebdb',       # Sand
+    #     'trace': '#fcfef3',      # White
+    #     'none': '#bdbdbd'        # Grey
+    # }
     colors = {
-        'excellent': '#236c7d',  # Dark Green
-        'good': '#4b8f90',       # Blue Green
-        'fair': '#7db7aa',       # Light Green
-        'poor': '#d4ebdb',       # Sand
+        'major hit': '#236c7d',  # Dark Green
+        'minor hit': '#7db7aa',       # Light Green
         'trace': '#fcfef3',      # White
         'none': '#bdbdbd'        # Grey
     }
+
+
+
     return colors
 
 if __name__ == '__main__':

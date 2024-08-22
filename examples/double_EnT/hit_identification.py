@@ -1,10 +1,9 @@
 from pygecko.parsers import MS_Base_Parser
 from pygecko.parsers.msconvert_wraper import msconvert
-from pygecko.reaction import Transformation, Product_Array, Reaction_Array
+from pygecko.reaction import Transformation, Product_Array
 from pygecko.visualization.visuals import Visualization
 from pygecko.analysis.analysis import Analysis
 from pathlib import Path
-from rdkit import Chem
 
 def main():
 
@@ -20,16 +19,16 @@ def main():
 
     # Pick peaks in the GC-MS
     ms_sequence.pick_peaks()
-    ms_sequence.set_internal_standard(4.02, name='Dodecane', smiles='CCCCCCCCCCCC')
+    ms_sequence.set_internal_standard(3.32, name='Dodecane', smiles='CCCCCCCCCCCC')
 
-    # Estimate the yields of the reactions.
+    # Identify hits for the reactions.
     yield_array = Analysis.calc_plate_ms_only_yield(ms_sequence, layout)
 
     # Generate plate heatmap.
     Visualization.visualize_plate_qualitative(yield_array['quantity'], well_labels=True,
                                   row_labels=["A", "B", "C", "D", "E", "F", "G", "H"],
-                                  col_labels=["1", "2", "3", "4", "5", "6" , "7", "8", "9", "10", "11", "12"]
-                                              )#, path='/results/Heatmap_Anomeric_Amide_Enabled_Aminative_Fragment_Coupling.png')
+                                  col_labels=["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11",
+                                              "12"] , path='results/Heatmap_Double_EnT.png')
 
     print("Done! Best wishes from the Glorius Group!")
 

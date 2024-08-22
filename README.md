@@ -33,7 +33,7 @@ pyGecko can be installed via pip:
 
 ```bash 
 git clone https://github.com/FlorianBoser/pyLurch.git
-cd pyGecko
+cd pyLurch
 pip install ./
 ```
 Afterward the path to the msConvert.exe needs to be specified. This can be done by running the following command:

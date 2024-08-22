@@ -113,15 +113,16 @@ class MS_Injection(Injection):
 
         candidates = {}
         for rt, peak in self.peaks.items():
-            if mz in peak.mass_spectrum['mz']:
-                index = np.where(peak.mass_spectrum['mz'] == mz)[0]
+            if peak.flag != 'standard':
+                if mz in peak.mass_spectrum['mz']:
+                    index = np.where(peak.mass_spectrum['mz'] == mz)[0]
 
-                if peak.mass_spectrum['rel_intensity'][index][0] > 2.0 and mz > peak.mass_spectrum['mz'].max() * (
-                        2 / 3):  
-                    
-                    isotope_error = self.__isotope_check(smiles, peak, mz)
-                    if isotope_error:
-                        candidates[isotope_error] = peak
+                    if peak.mass_spectrum['rel_intensity'][index][0] > 2.0 and mz > peak.mass_spectrum['mz'].max() * (
+                            2 / 3):
+
+                        isotope_error = self.__isotope_check(smiles, peak, mz)
+                        if isotope_error:
+                            candidates[isotope_error] = peak
         if candidates:
             if len(candidates) > 1:
 
